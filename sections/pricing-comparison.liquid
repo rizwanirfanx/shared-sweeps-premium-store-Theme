@@ -1,0 +1,413 @@
+{% comment %}
+  Section: Pricing Comparison Table
+  Description: Displays a feature comparison between Free and Premium plans
+{% endcomment %}
+
+<section 
+  class="pricing-comparison-section tw-py-[32px]"
+  style="background-color: {{ section.settings.background_color }};"
+  aria-labelledby="comparison-heading"
+>
+  <div class="tw-container tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8 tw-max-w-7xl">
+    {% if section.settings.heading != blank %}
+      <h2 
+        id="comparison-heading"
+        class="tw-text-2xl md:tw-text-3xl lg:tw-text-4xl tw-font-bold tw-text-center tw-mb-8 md:tw-mb-12"
+        style="color: {{ section.settings.heading_color }};"
+      >
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+
+    {%- comment -%} Center the table with max-width {%- endcomment -%}
+    <div class="tw-w-full tw-mx-auto">
+      <div class="comparison-table tw-bg-white tw-rounded-lg tw-shadow-lg tw-overflow-hidden">
+        {%- comment -%} Table Header {%- endcomment -%}
+        <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-p-4 md:tw-p-6 tw-border-b tw-border-gray-200">
+          <div class="tw-col-span-1"></div>
+          <div class="tw-text-center">
+            <h3 
+              class="tw-text-base md:tw-text-lg tw-font-semibold"
+              style="color: {{ section.settings.free_heading_color }};"
+            >
+              {{ section.settings.free_heading }}
+            </h3>
+          </div>
+          <div class="tw-text-center">
+            <h3 
+              class="tw-text-base md:tw-text-lg tw-font-semibold"
+              style="color: {{ section.settings.premium_heading_color }};"
+            >
+              {{ section.settings.premium_heading }}
+            </h3>
+          </div>
+        </div>
+
+        {%- comment -%} Feature Rows {%- endcomment -%}
+        {% for block in section.blocks %}
+          <div 
+            class="tw-grid tw-grid-cols-3 tw-gap-4 tw-p-4 md:tw-p-6 tw-border-b tw-border-gray-100 tw-items-center hover:tw-bg-gray-50 tw-transition-colors"
+            {{ block.shopify_attributes }}
+          >
+            {%- comment -%} Feature Name with Icon and Description {%- endcomment -%}
+            <div class="tw-col-span-1">
+              <div class="tw-flex tw-flex-col md:tw-flex-row tw-items-center md:tw-items-start tw-gap-2 md:tw-gap-3 tw-text-center md:tw-items-center">
+                {%- comment -%} Icon {%- endcomment -%}
+                {% if block.settings.svg_icon != blank or block.settings.icon != blank %}
+                  <div class="tw-flex-shrink-0" aria-hidden="true">
+                    {% if block.settings.svg_icon != blank %}
+                      <div class="feature-icon-wrapper">
+                        {{ block.settings.svg_icon }}
+                      </div>
+                    {% elsif block.settings.icon != blank %}
+                      <img 
+                        src="{{ block.settings.icon | image_url: width: 100 }}"
+                        alt=""
+                        width="50"
+                        height="50"
+                        loading="lazy"
+                        class="feature-icon-img"
+                      >
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                {%- comment -%} Feature Title and Description {%- endcomment -%}
+                <div class="tw-flex-1">
+                  <p 
+                    class="tw-text-sm md:tw-text-base tw-font-semibold tw-mb-0.5"
+                    style="color: {{ block.settings.feature_text_color }};"
+                  >
+                    {{ block.settings.feature_name }}
+                  </p>
+                  {% if block.settings.feature_description != blank %}
+                    <p 
+                      class="tw-text-xs md:tw-text-sm tw-leading-tight"
+                      style="color: {{ block.settings.description_color }};"
+                    >
+                      {{ block.settings.feature_description }}
+                    </p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            {%- comment -%} Free Plan {%- endcomment -%}
+            <div class="tw-flex tw-justify-center tw-items-center">
+              {% if block.settings.free_included %}
+                <svg class="tw-w-5 tw-h-5 md:tw-w-6 md:tw-h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Included">
+                  <circle cx="12" cy="12" r="10" fill="{{ section.settings.check_color }}" fill-opacity="0.1"/>
+                  <path d="M8 12L11 15L16 9" stroke="{{ section.settings.check_color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              {% else %}
+                <svg class="tw-w-5 tw-h-5 md:tw-w-6 md:tw-h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Not included">
+                  <circle cx="12" cy="12" r="10" fill="{{ section.settings.cross_color }}" fill-opacity="0.1"/>
+                  <path d="M9 9L15 15M15 9L9 15" stroke="{{ section.settings.cross_color }}" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              {% endif %}
+            </div>
+
+            {%- comment -%} Premium Plan {%- endcomment -%}
+            <div class="tw-flex tw-justify-center tw-items-center">
+              {% if block.settings.premium_included %}
+                <svg class="tw-w-5 tw-h-5 md:tw-w-6 md:tw-h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Included">
+                  <circle cx="12" cy="12" r="10" fill="{{ section.settings.check_color }}" fill-opacity="0.1"/>
+                  <path d="M8 12L11 15L16 9" stroke="{{ section.settings.check_color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              {% else %}
+                <svg class="tw-w-5 tw-h-5 md:tw-w-6 md:tw-h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Not included">
+                  <circle cx="12" cy="12" r="10" fill="{{ section.settings.cross_color }}" fill-opacity="0.1"/>
+                  <path d="M9 9L15 15M15 9L9 15" stroke="{{ section.settings.cross_color }}" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if section.settings.show_cta and section.settings.cta_text != blank %}
+      <div class="tw-text-center tw-mt-8 md:tw-mt-10 lg:tw-mt-12">
+        <a 
+          href="{{ section.settings.cta_link }}"
+          class="tw-inline-block tw-px-6 tw-py-2.5 md:tw-px-8 md:tw-py-3 lg:tw-px-10 lg:tw-py-4 tw-rounded-full tw-font-semibold tw-text-sm md:tw-text-base lg:tw-text-lg tw-transition-all tw-duration-300 hover:tw-opacity-90 focus:tw-outline-none focus:tw-ring-4 focus:tw-ring-offset-2"
+          style="background-color: {{ section.settings.cta_background }}; color: {{ section.settings.cta_text_color }};"
+          {% if section.settings.cta_link == blank %}aria-disabled="true"{% endif %}
+        >
+          {{ section.settings.cta_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .pricing-comparison-section {
+    position: relative;
+  }
+
+  .comparison-table {
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Icon sizing - 50px x 50px */
+  .feature-icon-wrapper,
+  .feature-icon-img {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Ensure SVG icons scale to 50px */
+  .feature-icon-wrapper svg {
+    width: 50px;
+    height: 50px;
+    max-width: 50px;
+    max-height: 50px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .comparison-table > div {
+      transition: none;
+    }
+  }
+
+  /* Mobile optimization */
+  @media (max-width: 640px) {
+    .comparison-table {
+      font-size: 0.875rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Pricing Comparison",
+  "tag": "section",
+  "class": "section-pricing-comparison",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Why upgrade?"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Column Headers"
+    },
+    {
+      "type": "text",
+      "id": "free_heading",
+      "label": "Free Plan Heading",
+      "default": "Free"
+    },
+    {
+      "type": "color",
+      "id": "free_heading_color",
+      "label": "Free Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "text",
+      "id": "premium_heading",
+      "label": "Premium Plan Heading",
+      "default": "Premium"
+    },
+    {
+      "type": "color",
+      "id": "premium_heading_color",
+      "label": "Premium Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Icon Colors"
+    },
+    {
+      "type": "color",
+      "id": "check_color",
+      "label": "Check Mark Color",
+      "default": "#10B981"
+    },
+    {
+      "type": "color",
+      "id": "cross_color",
+      "label": "Cross Mark Color",
+      "default": "#EF4444"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show CTA Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Upgrade to Premium"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA Button Link"
+    },
+    {
+      "type": "color",
+      "id": "cta_background",
+      "label": "CTA Background Color",
+      "default": "#4F46E5"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "CTA Text Color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Row",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Icon"
+        },
+        {
+          "type": "html",
+          "id": "svg_icon",
+          "label": "SVG Icon Code",
+          "info": "Paste your SVG code here. Icons will be displayed at 50x50px. This will override the image icon if both are provided."
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon Image (Alternative)",
+          "info": "Upload an image icon. Icons will be displayed at 50x50px. This will be used if no SVG code is provided."
+        },
+        {
+          "type": "header",
+          "content": "Feature Details"
+        },
+        {
+          "type": "text",
+          "id": "feature_name",
+          "label": "Feature Name",
+          "default": "Feature"
+        },
+        {
+          "type": "textarea",
+          "id": "feature_description",
+          "label": "Feature Description",
+          "info": "Small text that appears below the feature name"
+        },
+        {
+          "type": "color",
+          "id": "feature_text_color",
+          "label": "Feature Title Color",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "description_color",
+          "label": "Description Text Color",
+          "default": "#6B7280"
+        },
+        {
+          "type": "header",
+          "content": "Plan Availability"
+        },
+        {
+          "type": "checkbox",
+          "id": "free_included",
+          "label": "Included in Free Plan",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "premium_included",
+          "label": "Included in Premium Plan",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pricing Comparison",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Monthly entries",
+            "feature_description": "Enter giveaways every month",
+            "free_included": true,
+            "premium_included": true,
+            "svg_icon": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"10\" y=\"12\" width=\"30\" height=\"30\" rx=\"2\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"none\"/><line x1=\"10\" y1=\"20\" x2=\"40\" y2=\"20\" stroke=\"#4F46E5\" stroke-width=\"2\"/><line x1=\"18\" y1=\"8\" x2=\"18\" y2=\"16\" stroke=\"#4F46E5\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"32\" y1=\"8\" x2=\"32\" y2=\"16\" stroke=\"#4F46E5\" stroke-width=\"2\" stroke-linecap=\"round\"/><path d=\"M18 30L22 34L32 26\" stroke=\"#10B981\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Exclusive offers",
+            "feature_description": "Special deals for members only",
+            "free_included": false,
+            "premium_included": true,
+            "svg_icon": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"16\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"none\"/><path d=\"M25 15L28 22L35 23L30 28L31 35L25 31.5L19 35L20 28L15 23L22 22L25 15Z\" fill=\"#4F46E5\"/></svg>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Double entries",
+            "feature_description": "2x entries on all giveaways",
+            "free_included": false,
+            "premium_included": true,
+            "svg_icon": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"10\" y=\"16\" width=\"24\" height=\"16\" rx=\"2\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"none\"/><rect x=\"16\" y=\"22\" width=\"24\" height=\"16\" rx=\"2\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"#F0F4FF\"/><line x1=\"24\" y1=\"22\" x2=\"24\" y2=\"38\" stroke=\"#4F46E5\" stroke-width=\"1.5\" stroke-dasharray=\"3 3\"/><text x=\"26\" y=\"33\" font-size=\"10\" font-weight=\"bold\" fill=\"#4F46E5\">2X</text></svg>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Chance at $10,000+",
+            "feature_description": "Monthly grand prize draws",
+            "free_included": false,
+            "premium_included": true,
+            "svg_icon": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M17 12H33V24C33 29 29 33 25 33C21 33 17 29 17 24V12Z\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"none\"/><path d=\"M17 16H12V22H17\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"none\"/><path d=\"M33 16H38V22H33\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"none\"/><rect x=\"21\" y=\"33\" width=\"8\" height=\"5\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"none\"/><line x1=\"17\" y1=\"38\" x2=\"33\" y2=\"38\" stroke=\"#4F46E5\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"25\" cy=\"22\" r=\"5\" fill=\"#4F46E5\"/><text x=\"25\" y=\"26\" font-size=\"8\" font-weight=\"bold\" fill=\"white\" text-anchor=\"middle\">$</text></svg>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_name": "Early access",
+            "feature_description": "Be first to enter new giveaways",
+            "free_included": false,
+            "premium_included": true,
+            "svg_icon": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"16\" stroke=\"#4F46E5\" stroke-width=\"2\" fill=\"none\"/><path d=\"M25 15V25L32 32\" stroke=\"#4F46E5\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

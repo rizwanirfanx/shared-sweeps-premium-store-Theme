@@ -1,0 +1,164 @@
+{% comment %}
+  Section: Premium Community
+  Description: Displays information about Shared Sweeps Premium Community
+{% endcomment %}
+
+<section 
+  class="premium-community-section tw-py-[32px]"
+  style="background-color: {{ section.settings.background_color }};"
+  aria-labelledby="community-heading"
+>
+  <div class="tw-container tw-mx-auto tw-px-4 sm:tw-px-6 lg:tw-px-8 tw-max-w-7xl">
+    {% if section.settings.heading != blank %}
+      <h2 
+        id="community-heading"
+        class="tw-text-2xl md:tw-text-3xl lg:tw-text-4xl tw-font-bold tw-text-center tw-mb-6 md:tw-mb-8"
+        style="color: {{ section.settings.heading_color }};"
+      >
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+
+    {% if section.settings.description != blank %}
+      <div class="tw-max-w-4xl tw-mx-auto tw-text-center tw-mb-6 md:tw-mb-8">
+        <div 
+          class="tw-text-base md:tw-text-lg lg:tw-text-xl tw-leading-relaxed"
+          style="color: {{ section.settings.description_color }};"
+        >
+          {{ section.settings.description }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.stats_text != blank %}
+      <div class="tw-max-w-4xl tw-mx-auto tw-text-center">
+        <p 
+          class="tw-text-base md:tw-text-lg lg:tw-text-xl tw-font-semibold"
+          style="color: {{ section.settings.stats_color }};"
+        >
+          {{ section.settings.stats_text }}
+        </p>
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_cta and section.settings.cta_text != blank %}
+      <div class="tw-text-center tw-mt-8 md:tw-mt-10 lg:tw-mt-12">
+        <a 
+          href="{{ section.settings.cta_link }}"
+          class="tw-inline-block tw-px-6 tw-py-2.5 md:tw-px-8 md:tw-py-3 lg:tw-px-10 lg:tw-py-4 tw-rounded-full tw-font-semibold tw-text-sm md:tw-text-base lg:tw-text-lg tw-transition-all tw-duration-300 hover:tw-opacity-90 focus:tw-outline-none focus:tw-ring-4 focus:tw-ring-offset-2"
+          style="background-color: {{ section.settings.cta_background }}; color: {{ section.settings.cta_text_color }};"
+          {% if section.settings.cta_link == blank %}aria-disabled="true"{% endif %}
+        >
+          {{ section.settings.cta_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .premium-community-section {
+    position: relative;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .premium-community-section a {
+      transition: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Premium Community",
+  "tag": "section",
+  "class": "section-premium-community",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Join the Shared Sweeps Premium Community!"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Shared Sweeps Premium is a monthly membership that grants access to exclusive offers from Shared Sweeps brands (discounts, early access, etc), double entries on all Shared Sweeps purchases (retroactive), and entries into every Shared Sweeps giveaway including the $10,000 monthly prizes and the $100,000 grand prize!</p>"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color",
+      "default": "#374151"
+    },
+    {
+      "type": "text",
+      "id": "stats_text",
+      "label": "Stats Text",
+      "default": "Shared Sweeps has worked with over 100 brands given away over $700,000 to people just like you!"
+    },
+    {
+      "type": "color",
+      "id": "stats_color",
+      "label": "Stats Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show CTA Button",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Join Premium"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA Button Link"
+    },
+    {
+      "type": "color",
+      "id": "cta_background",
+      "label": "CTA Background Color",
+      "default": "#4F46E5"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "CTA Text Color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium Community",
+      "settings": {
+        "heading": "Join the Shared Sweeps Premium Community!",
+        "description": "<p>Shared Sweeps Premium is a monthly membership that grants access to exclusive offers from Shared Sweeps brands (discounts, early access, etc), double entries on all Shared Sweeps purchases (retroactive), and entries into every Shared Sweeps giveaway including the $10,000 monthly prizes and the $100,000 grand prize!</p>",
+        "stats_text": "Shared Sweeps has worked with over 100 brands given away over $700,000 to people just like you!"
+      }
+    }
+  ]
+}
+{% endschema %}
