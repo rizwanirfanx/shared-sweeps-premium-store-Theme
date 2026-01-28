@@ -1,19 +1,21 @@
 /**
  * Referral Tracking System
  *
- * Tracks referral sources via URL parameter (?ref=store-name) and stores
- * the referral information as a cart attribute visible in Shopify admin orders.
+ * Tracks referral sources via URL parameters (?ref=store-name&order_id=123) and stores
+ * the referral information as cart attributes visible in Shopify admin orders.
  *
  * Features:
- * - Reads ?ref= query parameter from URL
- * - Persists referral in localStorage across sessions
- * - Automatically adds referral as cart attribute when items are added
+ * - Reads ?ref= and ?order_id= query parameters from URL
+ * - Persists referral and order_id in localStorage across sessions
+ * - Automatically adds referral and order_id as cart attributes when items are added
  * - Referral data appears in order admin under "Additional Details"
  */
 
 const REFERRAL_PARAM = 'ref';
+const ORDER_ID_PARAM = 'order_id';
 const STORAGE_KEY = 'shared_sweeps_referral_tracker';
 const CART_ATTRIBUTE_KEY = 'Shared_Sweeps_Referred_By';
+const ORDER_ID_ATTRIBUTE_KEY = 'Shared_Sweeps_Order_ID';
 
 /**
  * ReferralTracker class handles all referral tracking functionality
@@ -27,6 +29,7 @@ class ReferralTracker {
    * Initialize the referral tracker
    */
   init() {
+    console.log('[Shared Sweeps ReferralTracker] Initializing...');
     // Check URL for referral parameter on page load
     this.captureReferralFromURL();
 
@@ -38,26 +41,36 @@ class ReferralTracker {
   }
 
   /**
-   * Capture referral code from URL query parameter
+   * Capture referral code and order_id from URL query parameters
    */
   captureReferralFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const referral = urlParams.get(REFERRAL_PARAM);
+    const orderId = urlParams.get(ORDER_ID_PARAM);
 
-    if (referral) {
-      this.storeReferral(referral);
-      console.log(`[Shared Sweeps ReferralTracker] Captured referral: ${referral}`);
+    if (referral || orderId) {
+      this.storeReferral(referral, orderId);
+      if (referral) {
+        console.log(`[Shared Sweeps ReferralTracker] Captured referral: ${referral}`);
+      }
+      if (orderId) {
+        console.log(`[Shared Sweeps ReferralTracker] Captured order_id: ${orderId}`);
+      }
     }
   }
 
   /**
-   * Store referral in localStorage
-   * @param {string} referral - The referral code to store
+   * Store referral and order_id in localStorage
+   * @param {string|null} referral - The referral code to store
+   * @param {string|null} orderId - The order ID to store
    */
-  storeReferral(referral) {
+  storeReferral(referral, orderId) {
     try {
+      // Get existing data to preserve values not being updated
+      const existingData = this.getStoredReferral() || {};
       const data = {
-        code: referral,
+        code: referral || existingData.code || null,
+        orderId: orderId || existingData.orderId || null,
         capturedAt: new Date().toISOString(),
         landingPage: window.location.pathname
       };
@@ -87,6 +100,7 @@ class ReferralTracker {
   setupCartListener() {
     // Listen for the theme's cart:update event (used by both CartAddEvent and CartUpdateEvent)
     document.addEventListener('cart:update', () => {
+      console.log('[Shared Sweeps ReferralTracker] Cart updated, syncing referral to cart...');
       this.syncReferralToCart();
     });
   }
@@ -97,7 +111,7 @@ class ReferralTracker {
   async syncReferralToCart() {
     const referralData = this.getStoredReferral();
 
-    if (!referralData || !referralData.code) {
+    if (!referralData || (!referralData.code && !referralData.orderId)) {
       return;
     }
 
@@ -106,9 +120,26 @@ class ReferralTracker {
       const cartResponse = await fetch('/cart.js');
       const cart = await cartResponse.json();
 
-      // Only update if the referral isn't already set
-      if (cart.attributes && cart.attributes[CART_ATTRIBUTE_KEY] === referralData.code) {
+      // Check if both referral and order_id are already set correctly
+      const referralMatches = !referralData.code || (cart.attributes && cart.attributes[CART_ATTRIBUTE_KEY] === referralData.code);
+      const orderIdMatches = !referralData.orderId || (cart.attributes && cart.attributes[ORDER_ID_ATTRIBUTE_KEY] === referralData.orderId);
+
+      if (referralMatches && orderIdMatches) {
         return;
+      }
+
+      // Build attributes object with available data
+      const attributes = {
+        'Shared_Sweeps_Referral_Landing_Page': referralData.landingPage,
+        'Shared_Sweeps_Referral_Captured_At': referralData.capturedAt
+      };
+
+      if (referralData.code) {
+        attributes[CART_ATTRIBUTE_KEY] = referralData.code;
+      }
+
+      if (referralData.orderId) {
+        attributes[ORDER_ID_ATTRIBUTE_KEY] = referralData.orderId;
       }
 
       // Update cart attributes with referral information
@@ -117,17 +148,16 @@ class ReferralTracker {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          attributes: {
-            [CART_ATTRIBUTE_KEY]: referralData.code,
-            'Shared_Sweeps_Referral_Landing_Page': referralData.landingPage,
-            'Shared_Sweeps_Referral_Captured_At': referralData.capturedAt
-          }
-        })
+        body: JSON.stringify({ attributes })
       });
 
       if (response.ok) {
-        console.log(`[ReferralTracker] Cart attribute updated with referral: ${referralData.code}`);
+        if (referralData.code) {
+          console.log(`[ReferralTracker] Cart attribute updated with referral: ${referralData.code}`);
+        }
+        if (referralData.orderId) {
+          console.log(`[ReferralTracker] Cart attribute updated with order_id: ${referralData.orderId}`);
+        }
       }
     } catch (error) {
       console.error('[ReferralTracker] Failed to update cart attributes:', error);
@@ -166,4 +196,4 @@ if (document.readyState === 'loading') {
 }
 
 // Export for module usage
-export { ReferralTracker, REFERRAL_PARAM, STORAGE_KEY, CART_ATTRIBUTE_KEY };
+export { ReferralTracker, REFERRAL_PARAM, ORDER_ID_PARAM, STORAGE_KEY, CART_ATTRIBUTE_KEY, ORDER_ID_ATTRIBUTE_KEY };
